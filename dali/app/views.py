@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from app.serializers import ClienteSerializer, GetClienteSerializer, PlasticoSerializer, GetPlasticoSerializer, PlasticoClienteSerializer, GetPlasticoClienteSerializer, AdministradorSerializer, GetAdministradorSerializer
 from app.classes import Cliente, Plastico, Administrador, PlasticoCliente
-from app.models import Cliente as ClienteModel , Administrador as AdministradorModel
+from app.models import Cliente as ClienteModel , Administrador as AdministradorModel, Plastico as PlasticoModel, PlasticoCliente as PlasticoClienteModel
 from rest_framework.exceptions import APIException
 # Create your views here.
 class TestView(APIView):
@@ -277,4 +277,53 @@ class InsertPlasticoCliente(APIView):
             print(e)
 
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class GetAllClientes (APIView):
+    permission_classes = (AllowAny,)
+    def get(self, request):
+        clientes = ClienteModel.objects.all()
+        serializer = ClienteSerializer(clientes, many=True)
+        return Response(serializer.data)
+
+
+class GetAllClientesPlastico (APIView):
+    permission_classes = (AllowAny,)
+    def get(self, request):
+        clientes = ClienteModel.objects.all()
+        clientesPlastico = PlasticoClienteModel.objects.all()
+        serializer = PlasticoClienteSerializer(clientesPlastico, many=True)
+        plastico = 0
+        listaClientes = []
+        listaPesoClientes = []
+        for cliente in clientes:
+            listaClientes.append(cliente.nombre)
+            for clientePlastico in clientesPlastico:
+                if cliente.nombre == clientePlastico.cliente.nombre:
+                    plastico += clientePlastico.peso
+            
+
+            listaPesoClientes.append(plastico)
+
+
+            plastico = 0
+
+        total = 0
+        index = 0
+        for i in listaPesoClientes:
+            index += 1
+            total += i
+        listaPorcentaje = []
+        for i in listaPesoClientes:
+            print("##########WQEDSDASDASDASDAS")
+            print(total)
+            listaPorcentaje.append((int(i)*100)//total)
+
+
+       
+
+        return Response(data={"clientes": listaClientes, "pesos": listaPorcentaje}, status=status.HTTP_200_OK)
+            
+    
+
+
 

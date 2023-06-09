@@ -1,8 +1,7 @@
 from django.urls import path, include
 from app.views import TestView, CreateCliente, GetCliente, EditCliente, DeleteCliente
 from app.views import CreateAdministrador, GetAdministrador, EditAdministrador, DeleteAdministrador
-from app.views import CreatePlastico, GetPlastico, EditPlastico, DeletePlastico, InsertPlasticoCliente
-
+from app.views import CreatePlastico, GetPlastico, EditPlastico, DeletePlastico, InsertPlasticoCliente, GetAllClientes, GetAllClientesPlastico
 
 urlpatterns = [
     path('test/', TestView.as_view(), name='test'),
@@ -18,5 +17,7 @@ urlpatterns = [
     path('editPlastico/', EditPlastico.as_view(), name='delete'),
     path('deletePlastico/', DeletePlastico.as_view(), name='delete'),
     path('insertClientePlastico/', InsertPlasticoCliente.as_view(), name='delete'),
+    path('getAllClientes/', GetAllClientes.as_view(), name='delete'),
+    path('getAllClientesPlastico/', GetAllClientesPlastico.as_view(), name='delete'),
 
 ]
