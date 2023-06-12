@@ -8,6 +8,18 @@ from app.serializers import ClienteSerializer, GetClienteSerializer, PlasticoSer
 from app.classes import Cliente, Plastico, Administrador, PlasticoCliente
 from app.models import Cliente as ClienteModel , Administrador as AdministradorModel, Plastico as PlasticoModel, PlasticoCliente as PlasticoClienteModel
 from rest_framework.exceptions import APIException
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+from io import BytesIO
+from reportlab.lib.units import inch
+from reportlab.platypus import Image
+from django.conf import settings
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+
 # Create your views here.
 class TestView(APIView):
     permission_classes = (AllowAny,)
@@ -333,7 +345,103 @@ class GetAllClientesPlastico (APIView):
 
         return Response(data={"clientes": listaClientes, "pesos": listaPorcentaje}, status=status.HTTP_200_OK)
             
-    
+
+class PDFGeneratorAPIView(APIView):
+    def get(self, request, format=None):
+        # Crear el objeto BytesIO para almacenar el PDF generado en memoria
+        buffer = BytesIO()
+
+        # Crear el objeto del documento PDF con margen de 1 pulgada
+        doc = SimpleDocTemplate(buffer, pagesize=letter, leftMargin=inch, rightMargin=inch,
+                                topMargin=inch, bottomMargin=inch)
+
+        # Datos para la tabla
+        data = [
+            ['RFC:', '','Razón Social:'],
+            [''],
+            ['Domicilio:' , ''],
+            [''],
+            ['Calle:' , '','Numero:', '', 'C.P:'],
+            [''],
+            ['Colonia:', '', 'Alcaldia:', ''],
+            [''],
+            ['Estado:', '', 'Contacto:', ''],
+            [''],
+            ['', '', 'Telefono:', ''],
+            [''],
+            [''],
+            ['Recoleccion', '','Disposicion','','Ruta','','Procedencia:'],
+            [''],
+            ['Ubicacion:', ''],
+            [''],
+            [''],
+            [''],
+            ['Tipo de Residuos:','', 'Cantidad:',''],
+
+            
+
+            
+        ]
+
+        # Crear la tabla y establecer el estilo
+        table = Table(data)
+        style = TableStyle([
+            # Establecer los estilos de la tabla aquí (como se mostró anteriormente)
+            ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+
+            ('BACKGROUND', (0, 1), (-1, 15), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, 1), colors.black),
+            ('FONTNAME', (0, 1), (-1, 1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, 1), 10),
+            ('ALIGN', (0, 1), (-1, 1), 'LEFT'),
+            ('BOTTOMPADDING', (0, 1), (-1, 1), 12),
+
+
+
+
+            
+
+        ])
+        table.setStyle(style)
+
+        # Crear el flujo de elementos y agregar la tabla
+        elements = []
+        styles = getSampleStyleSheet()
+
+                # Agregar texto en la parte superior derecha
+        texto_fuera_de_tabla = "Datos del Generador"
+        estilo_fuera_de_tabla = ParagraphStyle('FueraDeTabla', parent=styles['Normal'], alignment=0, fontSize=12)
+        texto_paragraph = Paragraph(texto_fuera_de_tabla, estilo_fuera_de_tabla)
+        elements.append(texto_paragraph)
+
+        elements.append(table)
+
+
+
+        # Generar el documento PDF
+        doc.build(elements)
+
+
+        # Obtener el contenido del PDF desde el objeto BytesIO
+        pdf = buffer.getvalue()
+        buffer.close()
+
+        # Crear el objeto HttpResponse con el tipo de contenido PDF.
+        response = HttpResponse(content_type='application/pdf')
+
+        # Establecer el nombre del archivo PDF.
+        response['Content-Disposition'] = 'attachment; filename="ejemplo.pdf"'
+
+        # Escribir el contenido del PDF en el objeto HttpResponse
+        response.write(pdf)
+
+        return response
 
 
 

@@ -1,8 +1,7 @@
 from django.urls import path, include
 from app.views import TestView, CreateCliente, GetCliente, EditCliente, DeleteCliente
 from app.views import CreateAdministrador, GetAdministrador, EditAdministrador, DeleteAdministrador
-from app.views import CreatePlastico, GetPlastico, EditPlastico, DeletePlastico, InsertPlasticoCliente, GetAllClientes, GetAllClientesPlastico, GetDatosClientes
-
+from app.views import CreatePlastico, GetPlastico, EditPlastico, DeletePlastico, InsertPlasticoCliente, GetAllClientes, GetAllClientesPlastico, GetDatosClientes, PDFGeneratorAPIView
 urlpatterns = [
     path('test/', TestView.as_view(), name='test'),
     path('createClient/', CreateCliente.as_view(), name='create'),
@@ -21,5 +20,6 @@ urlpatterns = [
     path('insertClientePlastico/', InsertPlasticoCliente.as_view(), name='delete'),
     path('getAllClientes/', GetAllClientes.as_view(), name='delete'),
     path('getAllClientesPlastico/', GetAllClientesPlastico.as_view(), name='delete'),
+    path('pdf/', PDFGeneratorAPIView.as_view(), name='delete'),
 
 ]
