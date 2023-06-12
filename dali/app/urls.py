@@ -1,12 +1,14 @@
 from django.urls import path, include
 from app.views import TestView, CreateCliente, GetCliente, EditCliente, DeleteCliente
 from app.views import CreateAdministrador, GetAdministrador, EditAdministrador, DeleteAdministrador
-from app.views import CreatePlastico, GetPlastico, EditPlastico, DeletePlastico, InsertPlasticoCliente, GetAllClientes, GetAllClientesPlastico
+from app.views import CreatePlastico, GetPlastico, EditPlastico, DeletePlastico, InsertPlasticoCliente, GetAllClientes, GetAllClientesPlastico, GetDatosClientes
 
 urlpatterns = [
     path('test/', TestView.as_view(), name='test'),
     path('createClient/', CreateCliente.as_view(), name='create'),
     path('getClient/', GetCliente.as_view(), name='get'),
+    path('getDatosClient/', GetDatosClientes.as_view(), name='get'),
+
     path('editClient/', EditCliente.as_view(), name='edit'),
     path('createAdministrador/', CreateAdministrador.as_view(), name='delete'),
     path('getAdministrador/', GetAdministrador.as_view(), name='get'),

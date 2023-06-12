@@ -122,6 +122,16 @@ class GetCliente(APIView):
 
         return Response(data={"empresa": cliente.nombre,}, status=status.HTTP_200_OK)
 
+class GetDatosClientes(APIView):
+    permission_classes = (AllowAny,)
+    def get(self, request):
+        Clientes = ClienteModel.objects.all()
+        serializer = ClienteSerializer(Clientes, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        
+
+
+
 
 class EditCliente(APIView):
     permission_classes = (AllowAny,)
